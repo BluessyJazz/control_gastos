@@ -131,13 +131,15 @@ def main():
             'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
             'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
             ]
+
+
+        timezone = pytz.timezone('America/Bogota')
+        fecha_actual = datetime.now(timezone).date()
         # Opciones para añadir, eliminar o modificar registros
         st.sidebar.title("Opciones")
 
         # Añadir nuevo registro
         with st.sidebar.expander("Añadir nuevo registro"):
-            timezone = pytz.timezone('America/Bogota')
-            fecha_actual = datetime.now(timezone).date()
             new_data = {}
 
             # Almacenar el tipo de registro seleccionado en el estado de sesión
@@ -216,12 +218,18 @@ def main():
 
         # Descargar archivo modificado
         if st.button("Descargar Excel modificado"):
-            output_path = "Control Gastos Ingresos Modificado.xlsx"
-            st.session_state.df.iloc[12:, :len(registros.columns)] = st.session_state.registros.values
+            timestamp = datetime.now(timezone).strftime("%Y%m%d%H%M%S")
+            output_path = f"Control Gastos Ingresos {timestamp}.xlsx"
+            # Eliminar todas las filas desde la línea 12 en st.session_state.df
+            st.session_state.df = st.session_state.df.iloc[:12]
+
+            # Añadir las filas de st.session_state.registros a st.session_state.df
+            st.session_state.df = pd.concat([st.session_state.df, st.session_state.registros], ignore_index=True)
+
+            # Guardar st.session_state.df en un archivo Excel
             st.session_state.df.to_excel(output_path, index=False, header=False, engine='openpyxl')
             st.write("Archivo modificado guardado. Haz click en el enlace para descargar:")
             st.markdown(f"[Descargar Excel](file://{os.path.abspath(output_path)})")
 
 if __name__ == "__main__":
     main()
-
