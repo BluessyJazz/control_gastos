@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 import pytz
 import time
+import numpy as np
 
 # Configurar la página
 st.set_page_config(page_title='Gestión de Gastos e Ingresos',
@@ -124,7 +125,6 @@ def main():
 
         # Mostrar registros del mes seleccionado
         st.dataframe(st.session_state.registros, use_container_width=True)
-        st.dataframe(st.session_state.df, use_container_width=True)
 
         # Formatear la fecha
         meses = [
@@ -220,14 +220,32 @@ def main():
         if st.button("Descargar Excel modificado"):
             timestamp = datetime.now(timezone).strftime("%Y%m%d%H%M%S")
             output_path = f"Control Gastos Ingresos {timestamp}.xlsx"
-            # Eliminar todas las filas desde la línea 11 en st.session_state.df
-            st.session_state.df = st.session_state.df.iloc[:11]
 
-            # Añadir las filas de st.session_state.registros a st.session_state.df
-            st.session_state.df = pd.concat([st.session_state.df, st.session_state.registros], axis=0, ignore_index=True)
+            # Número de filas vacías
+            num_empty_rows = 2
 
-            # Guardar st.session_state.df en un archivo Excel
-            st.session_state.df.to_excel(output_path, index=False, header=False, engine='openpyxl')
+            # Crear un DataFrame vacío con el número de filas que quieres añadir
+            empty_rows = pd.DataFrame(np.nan, index=range(num_empty_rows), columns=st.session_state.df.columns)
+
+            # Insertar las filas vacías en la posición que quieras
+            st.session_state.df = pd.concat([st.session_state.df.iloc[:6], empty_rows, st.session_state.df.iloc[6:]]).reset_index(drop=True)
+
+            
+            # Mantén solo las filas hasta la 11 en df
+            st.session_state.df = st.session_state.df.iloc[:13]
+
+            # Asegurarse de que st.session_state.df tenga al menos 13 filas
+            if len(st.session_state.df) < len(st.session_state.registros) + 1:
+                num_empty_rows = len(st.session_state.registros)
+                empty_rows = pd.DataFrame(np.nan, index=range(num_empty_rows), columns=st.session_state.df.columns)
+                st.session_state.df = pd.concat([st.session_state.df, empty_rows]).reset_index(drop=True)
+
+            # Resetear los nombres de las columnas de st.session_state.registros para que coincidan con los de st.session_state.df
+            st.session_state.registros.columns = st.session_state.df.columns
+
+            # Concatenar st.session_state.registros debajo de la fila 12 de st.session_state.df
+            st.session_state.df = pd.concat([st.session_state.df.iloc[:13], st.session_state.registros], axis=0, ignore_index=True)
+
             st.write("Archivo modificado guardado. Haz click en el botón para descargar:") # Leer el archivo Excel como bytes
             with open(output_path, 'rb') as f:
                 bytes_data = f.read()
