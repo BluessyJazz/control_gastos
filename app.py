@@ -217,10 +217,11 @@ def main():
         # Descargar archivo modificado
         if st.button("Descargar Excel modificado"):
             output_path = "Control Gastos Ingresos Modificado.xlsx"
-            st.session_state.df.iloc[12:12+len(st.session_state.registros), :len(st.session_state.registros.columns)] = st.session_state.registros.values
+            st.session_state.df.iloc[12:, :len(registros.columns)] = st.session_state.registros.values
             st.session_state.df.to_excel(output_path, index=False, header=False, engine='openpyxl')
             st.write("Archivo modificado guardado. Haz click en el enlace para descargar:")
             st.markdown(f"[Descargar Excel](file://{os.path.abspath(output_path)})")
 
 if __name__ == "__main__":
     main()
+
