@@ -220,8 +220,8 @@ def main():
         if st.button("Descargar Excel modificado"):
             timestamp = datetime.now(timezone).strftime("%Y%m%d%H%M%S")
             output_path = f"Control Gastos Ingresos {timestamp}.xlsx"
-            # Eliminar todas las filas desde la línea 12 en st.session_state.df
-            st.session_state.df = st.session_state.df.iloc[:12]
+            # Eliminar todas las filas desde la línea 11 en st.session_state.df
+            st.session_state.df = st.session_state.df.iloc[:11]
 
             # Añadir las filas de st.session_state.registros a st.session_state.df
             st.session_state.df = pd.concat([st.session_state.df, st.session_state.registros], axis=0, ignore_index=True)
