@@ -224,7 +224,7 @@ def main():
             st.session_state.df = st.session_state.df.iloc[:12]
 
             # Añadir las filas de st.session_state.registros a st.session_state.df
-            st.session_state.df = pd.concat([st.session_state.df, st.session_state.registros], ignore_index=True)
+            st.session_state.df = pd.concat([st.session_state.df, st.session_state.registros], axis=0, ignore_index=True)
 
             # Guardar st.session_state.df en un archivo Excel
             st.session_state.df.to_excel(output_path, index=False, header=False, engine='openpyxl')
