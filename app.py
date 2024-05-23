@@ -246,6 +246,9 @@ def main():
             # Concatenar st.session_state.registros debajo de la fila 12 de st.session_state.df
             st.session_state.df = pd.concat([st.session_state.df.iloc[:13], st.session_state.registros], axis=0, ignore_index=True)
 
+            # Guardar el archivo Excel modificado
+            st.session_state.df.to_excel(output_path, index=False)
+
             st.write("Archivo modificado guardado. Haz click en el botón para descargar:") # Leer el archivo Excel como bytes
             with open(output_path, 'rb') as f:
                 bytes_data = f.read()
