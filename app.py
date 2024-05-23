@@ -228,8 +228,17 @@ def main():
 
             # Guardar st.session_state.df en un archivo Excel
             st.session_state.df.to_excel(output_path, index=False, header=False, engine='openpyxl')
-            st.write("Archivo modificado guardado. Haz click en el enlace para descargar:")
-            st.markdown(f"[Descargar Excel](file://{os.path.abspath(output_path)})")
+            st.write("Archivo modificado guardado. Haz click en el botón para descargar:") # Leer el archivo Excel como bytes
+            with open(output_path, 'rb') as f:
+                bytes_data = f.read()
+
+            # Crear un botón de descarga para el archivo Excel
+            st.download_button(
+                label="Descargar Excel actualizado",
+                data=bytes_data,
+                file_name=output_path,
+                mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            )
 
 if __name__ == "__main__":
     main()
