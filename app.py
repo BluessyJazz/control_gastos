@@ -357,8 +357,7 @@ def main():
             row_index = st.number_input(
                                 'Ingrese el índice del registro a eliminar',
                                 min_value=0,
-                                max_value=len(registros)-1,
-                                value=None
+                                max_value=len(registros)-1
                                 )
             if st.button('Eliminar'):
                 registros = registros.drop(registros.index[row_index])
