@@ -240,11 +240,15 @@ def main():
                 empty_rows = pd.DataFrame(np.nan, index=range(num_empty_rows), columns=st.session_state.df.columns)
                 st.session_state.df = pd.concat([st.session_state.df, empty_rows]).reset_index(drop=True)
 
+            # Hacer una copia de st.session_state.registros
+            registros_guardar = st.session_state.registros.copy()
+
+
             # Resetear los nombres de las columnas de st.session_state.registros para que coincidan con los de st.session_state.df
-            st.session_state.registros.columns = st.session_state.df.columns
+            registros_guardar.columns = st.session_state.df.columns
 
             # Concatenar st.session_state.registros debajo de la fila 12 de st.session_state.df
-            st.session_state.df = pd.concat([st.session_state.df.iloc[:13], st.session_state.registros], axis=0, ignore_index=True)
+            st.session_state.df = pd.concat([st.session_state.df.iloc[:13], registros_guardar], axis=0, ignore_index=True)
 
             # Guardar el archivo Excel modificado
             st.session_state.df.to_excel(output_path, index=False)
